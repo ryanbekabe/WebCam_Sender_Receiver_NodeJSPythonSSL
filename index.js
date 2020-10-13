@@ -1,4 +1,5 @@
 // Setup basic express server
+var sleep = require('system-sleep')
 var fs = require('fs')
 var express = require('express');
 var app = express();
@@ -30,10 +31,21 @@ io.on('connection', function (client) {
 	});
    client.on('clientoserver', function(data) {
       var userAgent = new UserAgent();
-      console.log('Tangkap data client: ' + data);
+      //console.log('Tangkap data client: ' + data);
       io.emit('broadcast',{description: data});
       //document.getElementById("usersOnline").src = data;
       console.log('UserAgent browsernya: ' + userAgent.toString());
    });
+   //io.emit('broadcasttakess','take_snapshot()');
+
+   /*var i=0;
+   while(i < 10) {
+     //sleep(2000);
+     console.log('Loop: ' + i);
+     io.emit('broadcasttakess','take_snapshot()');
+     sleep(10*1000);
+     i++;
+   }*/
+
 });
 

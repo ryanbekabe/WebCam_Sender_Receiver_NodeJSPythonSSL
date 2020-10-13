@@ -3,18 +3,17 @@
 <body>
 <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
+<script src="webcam.min.js"></script>
 
 <div id="usersOnline">ini_div_usersOnline</div>
-	<!-- CSS -->
-    <style>
-    #my_camera{
-        width: 320px;
-        height: 240px;
-        border: 1px solid black;
-    }
-	</style>
+<style>
+	#my_camera{
+	width: 320px;
+	height: 240px;
+	border: 1px solid black;
+}
+</style>
 
-	<!-- -->
 	<div id="my_camera"></div>
 	<input type=button value="Configure" onClick="configure()">
 	<input type=button value="Take Snapshot" onClick="take_snapshot()">
@@ -22,27 +21,6 @@
 
     <div id="results"></div>
 
-	<!-- Script -->
-	<script type="text/javascript" src="webcam.min.js"></script>
-
-	<!-- Configure a few settings and attach camera -->
-	<script language="JavaScript">
-		Webcam.set({
-			width: 320,
-			height: 240,
-			image_format: 'jpeg',
-			jpeg_quality: 90
-		});
-		Webcam.attach('#my_camera');
-
-		setTimeout(function(){
-			//alert("After 5 seconds!");
-			take_snapshot();
-		}, 5000);
-	</script>
-	<!-- A button for taking snaps -->
-
-	<!-- Code to handle taking the snapshot and displaying it locally -->
 	<script>
         var socket = io.connect('https://rek.my.id:4436');
         socket.on('broadcast',function(data) {
@@ -51,6 +29,24 @@
         socket.on('connect', function(data) {
                 socket.emit('join', 'Bismillah|bekabeipa@gmail.com|hanyajasa.com|viewmode');
         });
+        /*socket.on('broadcasttakess', function(data) {
+                //Webcam.set({
+                        width: 320,
+                        height: 240,
+                        image_format: 'jpeg',
+                        jpeg_quality: 90
+                });
+                Webcam.attach('#my_camera');
+                document.addEventListener('click', take_snapshot());//
+                socket.emit('clientoserver',data_uri);
+		console.log('broadcasttakess get: ' + data);
+        });*/
+	
+		setTimeout(function(){
+			//alert("After 5 seconds!");
+			take_snapshot();
+			console.log('take_snapshot setTimeout 5 sec 1x');
+		}, 5000);
 
 		// Configure a few settings and attach camera
 		function configure(){
@@ -72,34 +68,12 @@
 		function take_snapshot() {
 			// play sound effect
 			//shutter.play();
-
 			// take snapshot and get image data
 			Webcam.snap( function(data_uri) {
 				// display results in page
-				document.getElementById('results').innerHTML =
-					'<img id="imageprev" src="'+data_uri+'"/>';
-					//'<img src="'+data_uri+'"/>';
-                                        socket.emit('clientoserver',data_uri);
-//socket.emit('clientoserver','Ini pesan dari browser yang diakses client: ' + window.location.href);
-
-/*
-var ba64 = require("ba64");
-//    data_url = "data:image/jpeg;base64,[Base64 encoded image goes here]";
-// Save the image synchronously.
-ba64.writeImageSync("myimage", data_uri); // Saves myimage.jpeg.
-// Or save the image asynchronously.
-ba64.writeImage("myimage", data_uri, function(err){
-    if (err) throw err;
-    console.log("Image saved successfully");
-});*/
-
-                                //var base64Data = req.rawBody.replace(/^data:image\/png;base64,/, "");
-                                /*var base64Data = data_uri.replace(/^data:image\/png;base64,/, "");
-                                require("fs").writeFile("out.png", base64Data, 'base64', function(err) {
-                                  console.log(err);
-                                }); */
-                        });
-
+				document.getElementById('results').innerHTML = '<img id="imageprev" src="'+data_uri+'"/>';
+				socket.emit('clientoserver',data_uri);
+            });
 			Webcam.reset();
 		}
 function upload() {
