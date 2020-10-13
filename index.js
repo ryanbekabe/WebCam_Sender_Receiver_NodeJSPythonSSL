@@ -23,6 +23,7 @@ var clients = 0;
 io.on('connection', function (client) {
 	clients++;
 	//io.emit('broadcast',{ description: clients + ' online.'});
+         console.log('Client connect! ' + clients + ' online!');
 
 	client.on('disconnect', function () {
 		clients--;
@@ -34,7 +35,7 @@ io.on('connection', function (client) {
       //console.log('Tangkap data client: ' + data);
       io.emit('broadcast',{description: data});
       //document.getElementById("usersOnline").src = data;
-      //console.log('UserAgent browsernya: ' + userAgent.toString());
+      console.log('UABrowser: ' + userAgent.toString());
    });
    //io.emit('broadcasttakess','take_snapshot()');
 
