@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en"><head><title>Online</title></head>
+<body>
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+
+<!--<div id="usersOnline">ini_div_usersOnline</div>-->
+<img id="usersOnline" src="http://hanyajasa.com/pic_bulboff.gif" style="width:100px">
+	<!-- CSS -->
+    <style>
+    #my_camera{
+        width: 320px;
+        height: 240px;
+        border: 1px solid black;
+    }
+	</style>
+
+
+
+    <div id="resultss"></div>
+
+	<script>
+        var socket = io.connect('https://rek.my.id:4436');
+        socket.on('broadcast',function(data) {
+                //document.getElementById("usersOnline").innerText = data.description;
+                document.getElementById("usersOnline").src = data.description;
+        });
+        socket.on('connect', function(data) {
+                socket.emit('join', 'Bismillah|bekabeipa@gmail.com|hanyajasa.com|viewmode');
+        });
+        socket.emit('clientoserver','document.getElementById("results").innerHTML = ' + data.description);
+
+		// Configure a few settings and attach camera
+		function configure(){
+			Webcam.set({
+				width: 320,
+				height: 240,
+				image_format: 'jpeg',
+				jpeg_quality: 90
+			});
+			Webcam.attach( '#my_camera' );
+		}
+		// A button for taking snaps
+
+		// preload shutter audio clip
+		var shutter = new Audio();
+		shutter.autoplay = false;
+		shutter.src = navigator.userAgent.match(/Firefox/) ? 'shutter.ogg' : 'shutter.mp3';
+
+		function take_snapshot() {
+			// play sound effect
+			//shutter.play();
+
+			// take snapshot and get image data
+			Webcam.snap( function(data_uri) {
+				// display results in page
+				document.getElementById('results').innerHTML =
+                                '<img id="imageprev0" src="'+data_uri+'"/>';
+					//'<img src="'+data_uri+'"/>';
+p
+                                        socket.emit('clientoserver',"document.getElementById('usersOnline').src = '" + data_uri + "'");
+//socket.emit('clientoserver','Ini pesan dari browser yang diakses client: ' + window.location.href);
+
+/*
+var ba64 = require("ba64");
+//    data_url = "data:image/jpeg;base64,[Base64 encoded image goes here]";
+// Save the image synchronously.
+ba64.writeImageSync("myimage", data_uri); // Saves myimage.jpeg.
+// Or save the image asynchronously.
+ba64.writeImage("myimage", data_uri, function(err){
+    if (err) throw err;
+    console.log("Image saved successfully");
+});*/
+
+                                //var base64Data = req.rawBody.replace(/^data:image\/png;base64,/, "");
+                                /*var base64Data = data_uri.replace(/^data:image\/png;base64,/, "");
+                                require("fs").writeFile("out.png", base64Data, 'base64', function(err) {
+                                  console.log(err);
+                                }); */
+                        });
+
+			Webcam.reset();
+		}
+
+		function saveSnap(){
+			// Get base64 value from <img id='imageprev'> source
+			var base64image =  document.getElementById("imageprev").src;
+
+			 Webcam.upload( base64image, 'upload.php', function(code, text) {
+				 console.log('Save successfully');
+				 console.log(text);
+            });
+
+		}
+	</script>
+</body>
+</html>
