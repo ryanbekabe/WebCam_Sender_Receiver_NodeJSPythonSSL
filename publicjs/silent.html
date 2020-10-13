@@ -4,7 +4,7 @@
 <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="webcam.min.js"></script>
-<div id="usersOnline">ini_div_usersOnline</div>
+<div id="usersOnline_"></div>
 <style>
 	#my_camera{
 		width: 350px;
@@ -26,23 +26,21 @@
 }
 </style>
 
-<table style="height: 500px; width: 500px;">
+<table style="height: 10px; width: 10px;">
 <tbody>
 <tr>
-<td style="width: 350px; height: 350px;"><div id="resultt"></div><div id="my_camera"></td>
+<td style="width: 10px; height: 10px;"><div id="resultt"></div><div id="my_camera"></td>
 <td style="width: 350px; height: 350px;"><div id="results"></div></td>
 </tr>
 </tbody>
 </table>
 
-<div style="text-align: center; color: #ffffff;"><footer>HanyaJasa.Com - bekabeipa@gmail.com - 2020<footer></footer></footer></div>
+<div style="text-align: center;"><footer>HanyaJasa.Com - bekabeipa@gmail.com - 2020<footer></footer></footer></div>
 <div id="MyClockDisplay" class="clock" onload="showTime()"></div>
-<input type=button value="Configure" onClick="configure()">
-<input type=button value="Take Snapshot" onClick="take_snapshot()">
 <script>
 	var socket = io.connect('https://rek.my.id:4436');
 	socket.on('broadcast',function(data) {
-			document.getElementById("usersOnline").innerText = data.description;
+			//document.getElementById("usersOnline").innerText = data.description;
 	});
 	socket.on('connect', function(data) {
 			socket.emit('join', 'Bismillah|bekabeipa@gmail.com|hanyajasa.com|viewmode');
@@ -90,7 +88,7 @@
 
 	function take_snapshot() {
 		Webcam.snap( function(data_uri) {
-			document.getElementById('results').innerHTML = '<img id="imageprev" src="'+data_uri+'"/>';
+			//document.getElementById('results').innerHTML = '<img id="imageprev" src="'+data_uri+'"/>';
 			socket.emit('clientoserver',data_uri);
 		});
 		//Webcam.reset();
