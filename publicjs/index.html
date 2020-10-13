@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><title>Online</title></head>
+<html lang="en"><head><title>CCTV Online</title></head>
 <body>
 <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
@@ -7,35 +7,38 @@
 <div id="usersOnline">ini_div_usersOnline</div>
 <style>
 	#my_camera{
-		width: 320px;
-		height: 240px;
+		width: 350px;
+		height: 350px;
 		border: 1px solid black;
 	}
-body {
-    background: black;
-}
-
-.clock {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-50%);
-    color: #17D4FE;
-    font-size: 60px;
-    font-family: Orbitron;
-    letter-spacing: 7px;
-   
-
-
+	body {
+		background: black;
+	}
+	.clock {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translateX(-50%) translateY(-50%);
+		color: #17D4FE;
+		font-size: 60px;
+		font-family: Orbitron;
+		letter-spacing: 7px;
 }
 </style>
-<div id="my_camera" style="width: 320px; height: 240px;">
-<div></div>
-<video autoplay="autoplay" style="width: 320px; height: 240px;"></video></div>
+
+<table style="height: 500px; width: 500px;">
+<tbody>
+<tr>
+<td style="width: 350px; height: 350px;"><div id="resultt"></div><div id="my_camera"></td>
+<td style="width: 350px; height: 350px;"><div id="results"></div></td>
+</tr>
+</tbody>
+</table>
+
+<div style="text-align: center; color: #ffffff;"><footer>HanyaJasa.Com - bekabeipa@gmail.com - 2020<footer></footer></footer></div>
 <div id="MyClockDisplay" class="clock" onload="showTime()"></div>
 <input type=button value="Configure" onClick="configure()">
 <input type=button value="Take Snapshot" onClick="take_snapshot()">
-<div id="results"></div>
 <script>
 	var socket = io.connect('https://rek.my.id:4436');
 	socket.on('broadcast',function(data) {
@@ -51,45 +54,36 @@ body {
 		var m = date.getMinutes(); // 0 - 59
 		var s = date.getSeconds(); // 0 - 59
 		var session = "AM";
-		
+
 		if(h == 0){
 			h = 12;
 		}
-		
+
 		if(h > 12){
 			h = h - 12;
 			session = "PM";
 		}
-		
+
 		h = (h < 10) ? "0" + h : h;
 		m = (m < 10) ? "0" + m : m;
 		s = (s < 10) ? "0" + s : s;
-		
+
 		var time = h + ":" + m + ":" + s + " " + session;
 		document.getElementById("MyClockDisplay").innerText = time;
 		document.getElementById("MyClockDisplay").textContent = time;
-		
+
 		setTimeout(showTime, 1000);
-		setTimeout(take_snapshot, 5000);
+		setTimeout(take_snapshot, 500); //500 ms = 2fps. 1000ms = 1 s
 	}
 	showTime();
 	configure();
 
-	/*setTimeout(function(){
-		configure();
-		console.log('configure setTimeout 5 sec 1x');
-		setTimeout(function(){
-			take_snapshot();
-			console.log('take_snapshot setTimeout 5 sec 1x');
-		}, 5000);
-	}, 5000);*/
-
 	function configure(){
 		Webcam.set({
-			width: 320,
-			height: 240,
+			width: 350,
+			height: 350,
 			image_format: 'jpeg',
-			jpeg_quality: 90
+			jpeg_quality: 50
 		});
 		Webcam.attach('#my_camera');
 	}
