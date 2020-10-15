@@ -1,0 +1,45 @@
+<!doctype html>
+<head><title>Stream WSS</title></head>
+<body>
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<div id="usersOnline">ini_div_usersOnline</div>
+<form name="publish">
+  <input type="text" name="message" maxlength="50" style="visibility: none;"/>
+  <input type="submit" value="Send" style="visibility: none;"/>
+</form>
+<div id="messages" hidden="false"></div>
+<table style="margin-left: auto; margin-right: auto;">
+<tbody><tr><td>
+<div id="dispPanelVid" class="dispPanel">
+	<img id="camstream" class="video-image" src="https://hanyajasa.com/pic_bulboff.gif" alt="Data Stream" width="300" height="300" />
+</div>
+</td></tr></tbody>
+</table>
+<div style="text-align: center;"><footer>HanyaJasa.Com - 2020<footer></footer></footer></div>
+
+<script>
+let url = 'wss://rek.my.id:8081/ws';
+let socket = new WebSocket(url);
+// send message from the form
+document.forms.publish.onsubmit = function() {
+  let outgoingMessage = this.message.value;
+  socket.send(outgoingMessage);
+  return false;
+};
+// handle incoming messages
+socket.onmessage = function(event) {
+  let incomingMessage = event.data;
+  showMessage(incomingMessage);
+};
+socket.onclose = event => console.log(`Closed ${event.code}`);
+// show message in div#messages
+function showMessage(message) {
+  let messageElem = document.createElement('div');
+  messageElem.textContent = message;
+  document.getElementById('messages').prepend(messageElem);
+  //document.getElementById("usersOnline").innerText = message;
+  document.getElementById("camstream").src = message;
+}
+</script>
+</body>
+</html>

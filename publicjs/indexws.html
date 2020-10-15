@@ -1,0 +1,119 @@
+<!doctype html>
+<script src="https://cctv.rek.my.id/webcam.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<div id="usersOnline">ini_div_usersOnline</div>
+<style>
+	#my_camera{
+		width: 350px;
+		height: 350px;
+		border: 1px solid black;
+	}
+	body {
+		background: black;
+	}
+	.clock {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translateX(-50%) translateY(-50%);
+		color: #17D4FE;
+		font-size: 60px;
+		font-family: Orbitron;
+		letter-spacing: 7px;
+	}
+</style>
+
+<table style="height: 500px; width: 500px;">
+<tbody>
+<tr>
+<td style="width: 350px; height: 350px;"><div id="resultt"></div><div id="my_camera"></td>
+<td style="width: 350px; height: 350px;"><div id="results"></div></td>
+</tr>
+</tbody>
+</table>
+
+<div style="text-align: center; color: #ffffff;"><footer>HanyaJasa.Com - bekabeipa@gmail.com - 2020<footer></footer></footer></div>
+<div id="MyClockDisplay" class="clock" onload="showTime()"></div>
+<input type=button value="Configure" onClick="configure()">
+<input type=button value="Take Snapshot" onClick="take_snapshot()">
+
+<form name="publish">
+  <input type="text" name="message" maxlength="50" style="visibility: hidden;"/>
+  <input type="submit" value="Send" style="visibility: hidden;"/>
+</form>
+<div id="messages" hidden="true"></div>
+<script>
+let url = 'wss://rek.my.id:8081/ws';
+let socket = new WebSocket(url);
+	function showTime(){
+		//https://codepen.io/afarrar/pen/JRaEjP
+		var date = new Date();
+		var h = date.getHours(); // 0 - 23
+		var m = date.getMinutes(); // 0 - 59
+		var s = date.getSeconds(); // 0 - 59
+		var session = "AM";
+
+		if(h == 0){
+			h = 12;
+		}
+
+		if(h > 12){
+			h = h - 12;
+			session = "PM";
+		}
+
+		h = (h < 10) ? "0" + h : h;
+		m = (m < 10) ? "0" + m : m;
+		s = (s < 10) ? "0" + s : s;
+
+		var time = h + ":" + m + ":" + s + " " + session;
+		document.getElementById("MyClockDisplay").innerText = time;
+		document.getElementById("MyClockDisplay").textContent = time;
+
+		setTimeout(showTime, 1000);
+		setTimeout(take_snapshot, 15000);
+	}
+	showTime();
+	configure();
+
+	function configure(){
+		Webcam.set({
+			width: 350,
+			height: 350,
+			image_format: 'jpeg',
+			jpeg_quality: 50
+		});
+		Webcam.attach('#my_camera');
+	}
+
+	function take_snapshot() {
+		Webcam.snap( function(data_uri) {
+			document.getElementById('results').innerHTML = '<img id="imageprev" src="'+data_uri+'"/>';
+			//socket.emit('clientoserver',data_uri);
+			socket.send(data_uri);
+		});
+		//Webcam.reset();
+	}
+// send message from the form
+document.forms.publish.onsubmit = function() {
+  let outgoingMessage = this.message.value;
+  socket.send(outgoingMessage);
+  return false;
+};
+// handle incoming messages
+socket.onmessage = function(event) {
+  let incomingMessage = event.data;
+  showMessage(incomingMessage);
+};
+socket.onclose = event => console.log(`Closed ${event.code}`);
+// show message in div#messages
+function showMessage(message) {
+  let messageElem = document.createElement('div');
+  messageElem.textContent = message;
+  document.getElementById('messages').prepend(messageElem);
+  document.getElementById("usersOnline").innerText = message;
+}
+</script>
+</body>
+</html>
+
