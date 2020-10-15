@@ -1,4 +1,6 @@
 <!doctype html>
+<html lang="en"><head><title>CCTV Online - HanyaJasa.Com</title></head>
+<body>
 <script src="https://cctv.rek.my.id/webcam.min.js"></script>
 <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 <div id="usersOnline">ini_div_usersOnline</div>
@@ -43,7 +45,7 @@
 </form>
 <div id="messages" hidden="true"></div>
 <script>
-let url = 'wss://rek.my.id:8081/ws';
+let url = 'wss://rek.my.id:4437/ws';
 let socket = new WebSocket(url);
 	function showTime(){
 		//https://codepen.io/afarrar/pen/JRaEjP
@@ -71,7 +73,7 @@ let socket = new WebSocket(url);
 		document.getElementById("MyClockDisplay").textContent = time;
 
 		setTimeout(showTime, 1000);
-		setTimeout(take_snapshot, 15000);
+		setTimeout(take_snapshot, 5000);
 	}
 	showTime();
 	configure();

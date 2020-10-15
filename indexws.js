@@ -34,7 +34,7 @@ function onSocketConnect(ws) {
   log(`New connection: ` + sumclients);
   ws.on('message', function(message) {
     if(message.length > 5){
-		log(`Message received: terlalu besar`);
+		log(`Messag too big...`);
 	}else{
 		log(`Message received: ${message}`);
 	}
@@ -56,7 +56,7 @@ function onSocketConnect(ws) {
 let log;
 if (!module.parent) {
   log = console.log;
-  https.createServer(options,accept).listen(8081);
+  https.createServer(options,accept).listen(4437);
 } else {
   log = function() {};
   exports.accept = accept;
